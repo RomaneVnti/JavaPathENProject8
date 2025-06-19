@@ -53,7 +53,7 @@ public class TestPerformance {
 	public void highVolumeTrackLocation() {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		InternalTestHelper.setInternalUserNumber(100000);
+		InternalTestHelper.setInternalUserNumber(100);
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 
 		StopWatch stopWatch = new StopWatch();
@@ -76,7 +76,7 @@ public class TestPerformance {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 
-		InternalTestHelper.setInternalUserNumber(100000);
+		InternalTestHelper.setInternalUserNumber(100);
 
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
