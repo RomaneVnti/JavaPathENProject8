@@ -51,10 +51,10 @@ jobs:
       - name: List TourGuide/libs content
         run: ls -l TourGuide/libs
 
-      - name: Set up JDK 21
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '17'
           distribution: 'temurin'
           cache: maven
 
@@ -73,12 +73,9 @@ jobs:
       - name: Create reports directory
         run: |
           mkdir -p reports/surefire
-          mkdir -p reports/jacoco
           mkdir -p reports/surefire-reports
-          cp TourGuide/target/surefire-reports/* reports/surefire/
-          cp -r TourGuide/target/site/* reports/jacoco/
+          cp TourGuide/target/surefire-reports/* reports/surefire/ || true
           cp -r TourGuide/target/reports/* reports/surefire-reports/ || true
-      
 
       - name: Upload reports
         uses: actions/upload-artifact@v4
@@ -96,10 +93,10 @@ jobs:
       - name: List TourGuide/libs content
         run: ls -l TourGuide/libs
 
-      - name: Set up JDK 21
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '17'
           distribution: 'temurin'
           cache: maven
 
