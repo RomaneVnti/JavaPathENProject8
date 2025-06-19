@@ -78,6 +78,7 @@ jobs:
           cp TourGuide/target/surefire-reports/* reports/surefire/
           cp -r TourGuide/target/site/* reports/jacoco/
           cp -r TourGuide/target/reports/* reports/surefire-reports/ || true
+      
 
       - name: Upload reports
         uses: actions/upload-artifact@v4
