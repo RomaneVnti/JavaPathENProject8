@@ -35,22 +35,23 @@ public class RewardsService {
 	public void setDefaultProximityBuffer() {
 		proximityBuffer = defaultProximityBuffer;
 	}
-	
+
 	public void calculateRewards(User user) {
-		List<VisitedLocation> userLocations = user.getVisitedLocations();
-		List<Attraction> attractions = gpsUtil.getAttractions();
-		
-		for(VisitedLocation visitedLocation : userLocations) {
-			for(Attraction attraction : attractions) {
-				if(user.getUserRewards().stream().filter(r -> r.attraction.attractionName.equals(attraction.attractionName)).count() == 0) {
-					if(nearAttraction(visitedLocation, attraction)) {
-						user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
-					}
+		List<VisitedLocation> visitedLocations = List.copyOf(user.getVisitedLocations());
+		List<Attraction> attractions = List.copyOf(gpsUtil.getAttractions());
+
+		for (VisitedLocation visitedLocation : visitedLocations) {
+			for (Attraction attraction : attractions) {
+				boolean alreadyRewarded = user.getUserRewards().stream()
+						.anyMatch(r -> r.attraction.attractionName.equals(attraction.attractionName));
+				if (!alreadyRewarded && nearAttraction(visitedLocation, attraction)) {
+					user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
 				}
 			}
 		}
 	}
-	
+
+
 	public boolean isWithinAttractionProximity(Attraction attraction, Location location) {
 		return getDistance(attraction, location) > attractionProximityRange ? false : true;
 	}

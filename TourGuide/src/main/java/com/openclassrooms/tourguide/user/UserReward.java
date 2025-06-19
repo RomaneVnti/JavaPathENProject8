@@ -26,5 +26,9 @@ public class UserReward {
 	public int getRewardPoints() {
 		return rewardPoints;
 	}
-	
+
+	public VisitedLocation getVisitedLocation() { return visitedLocation; }
+	public Attraction getAttraction() { return attraction; }
+
+
 }
