@@ -1,5 +1,6 @@
 package com.openclassrooms.tourguide.service;
 
+import com.openclassrooms.tourguide.dto.NearbyAttractionDTO;
 import com.openclassrooms.tourguide.helper.InternalTestHelper;
 import com.openclassrooms.tourguide.tracker.Tracker;
 import com.openclassrooms.tourguide.user.User;
@@ -7,14 +8,7 @@ import com.openclassrooms.tourguide.user.UserReward;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -54,6 +48,32 @@ public class TourGuideService {
 		tracker = new Tracker(this);
 		addShutDownHook();
 	}
+
+	public List<NearbyAttractionDTO> getTopFiveNearbyAttractions(User user) {
+		VisitedLocation visitedLocation = getUserLocation(user);
+		Location userLocation = visitedLocation.location;
+
+		return gpsUtil.getAttractions().stream()
+				.map(attraction -> {
+					double distance = rewardsService.getDistance(
+							userLocation,
+							new Location(attraction.latitude, attraction.longitude)
+					);
+
+					int rewardPoints = rewardsService.getRewardPoints(attraction, user);
+
+					return new NearbyAttractionDTO(
+							attraction.attractionName,
+							new Location(attraction.latitude, attraction.longitude),
+							userLocation,
+							distance,
+							rewardPoints);
+				})
+				.sorted(Comparator.comparingDouble(NearbyAttractionDTO::getDistance))
+				.limit(5)
+				.collect(Collectors.toList());
+	}
+
 
 	public List<UserReward> getUserRewards(User user) {
 		return user.getUserRewards();
@@ -114,6 +134,8 @@ public class TourGuideService {
 		});
 	}
 
+
+
 	/**********************************************************************************
 	 *
 	 * Methods Below: For Internal Testing
@@ -160,5 +182,7 @@ public class TourGuideService {
 		LocalDateTime localDateTime = LocalDateTime.now().minusDays(new Random().nextInt(30));
 		return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
+
+
 
 }
