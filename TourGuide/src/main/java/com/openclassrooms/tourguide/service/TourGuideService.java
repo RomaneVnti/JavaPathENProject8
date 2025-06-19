@@ -9,6 +9,9 @@ import com.openclassrooms.tourguide.user.UserReward;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -184,5 +187,18 @@ public class TourGuideService {
 	}
 
 
+	public void trackAllUserLocations() {
+		List<User> allUsers = getAllUsers();  // Récupère tous les utilisateurs enregistrés
+
+		ExecutorService executor = Executors.newFixedThreadPool(100); // Un pool de threads
+
+		List<CompletableFuture<Void>> futures = allUsers.stream()
+				.map(user -> CompletableFuture.runAsync(() -> trackUserLocation(user), executor)) // Lance chaque traitement en parallèle
+				.collect(Collectors.toList());
+
+		CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join(); // Attend que tous les traitements soient terminés
+
+		executor.shutdown(); // Ferme le pool
+	}
 
 }
